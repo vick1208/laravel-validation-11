@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Tests\TestCase;
 
@@ -34,7 +35,7 @@ class ValidatorTest extends TestCase
     public function testInvalidValidator(){
         $data = [
             "username" => "",
-            "password" => 123445,
+            "password" => null,
         ];
         $rules = [
             "username" => "required",
@@ -47,6 +48,9 @@ class ValidatorTest extends TestCase
 
         assertTrue($validator->fails());
         assertFalse($validator->passes());
+
+        $message = $validator->getMessageBag();
+        Log::info($message->toJson(JSON_PRETTY_PRINT));
 
     }
 }
