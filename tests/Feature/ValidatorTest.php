@@ -67,13 +67,13 @@ class ValidatorTest extends TestCase
         ];
 
         $validator = Validator::make($data, $rules);
-        self::assertNotNull($validator);
+        assertNotNull($validator);
 
         try {
             $validator->validate();
             self::fail("ValidationException not thrown");
         }catch (ValidationException $exception){
-            self::assertNotNull($exception->validator);
+            assertNotNull($exception->validator);
             $message = $exception->validator->errors();
             Log::error($message->toJson(JSON_PRETTY_PRINT));
         }
