@@ -54,6 +54,7 @@ class ValidatorTest extends TestCase
         Log::info($message->toJson(JSON_PRETTY_PRINT));
 
     }
+
     public function testValidatorValidationException()
     {
         $data = [
@@ -71,11 +72,32 @@ class ValidatorTest extends TestCase
 
         try {
             $validator->validate();
-            self::fail("ValidationException not thrown");
+            self::fail('Validation Exception Not Thrown');
         }catch (ValidationException $exception){
             assertNotNull($exception->validator);
             $message = $exception->validator->errors();
             Log::error($message->toJson(JSON_PRETTY_PRINT));
         }
+    }
+    public function testValidationRules(){
+        $data = [
+            "username" => "eko@mail.com",
+            "password" => "ek",
+        ];
+        $rules = [
+            "username" => "required|email|max:100",
+            "password" => ["required","min:6","max:20"],
+        ];
+
+        $validator = Validator::make($data,$rules);
+
+        assertNotNull($validator);
+
+        assertTrue($validator->fails());
+        assertFalse($validator->passes());
+
+        $message = $validator->getMessageBag();
+        Log::info($message->toJson(JSON_PRETTY_PRINT));
+
     }
 }
