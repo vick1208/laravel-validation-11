@@ -15,7 +15,8 @@ use function PHPUnit\Framework\assertTrue;
 
 class ValidatorTest extends TestCase
 {
-    public function testValidator(){
+    public function testValidator()
+    {
         $data = [
             "username" => "admin",
             "password" => 123445,
@@ -25,15 +26,15 @@ class ValidatorTest extends TestCase
             "password" => "required",
         ];
 
-        $validator = Validator::make($data,$rules);
+        $validator = Validator::make($data, $rules);
 
         assertNotNull($validator);
 
         assertTrue($validator->passes());
         assertFalse($validator->fails());
-
     }
-    public function testInvalidValidator(){
+    public function testInvalidValidator()
+    {
         $data = [
             "username" => "",
             "password" => null,
@@ -43,7 +44,7 @@ class ValidatorTest extends TestCase
             "password" => "required",
         ];
 
-        $validator = Validator::make($data,$rules);
+        $validator = Validator::make($data, $rules);
 
         assertNotNull($validator);
 
@@ -52,7 +53,6 @@ class ValidatorTest extends TestCase
 
         $message = $validator->getMessageBag();
         Log::info($message->toJson(JSON_PRETTY_PRINT));
-
     }
 
     public function testValidatorValidationException()
@@ -73,23 +73,24 @@ class ValidatorTest extends TestCase
         try {
             $validator->validate();
             self::fail('Validation Exception Not Thrown');
-        }catch (ValidationException $exception){
+        } catch (ValidationException $exception) {
             assertNotNull($exception->validator);
             $message = $exception->validator->errors();
             Log::error($message->toJson(JSON_PRETTY_PRINT));
         }
     }
-    public function testValidationRules(){
+    public function testValidationRules()
+    {
         $data = [
             "username" => "eko@mail.com",
             "password" => "ek",
         ];
         $rules = [
             "username" => "required|email|max:100",
-            "password" => ["required","min:6","max:20"],
+            "password" => ["required", "min:6", "max:20"],
         ];
 
-        $validator = Validator::make($data,$rules);
+        $validator = Validator::make($data, $rules);
 
         assertNotNull($validator);
 
@@ -98,6 +99,32 @@ class ValidatorTest extends TestCase
 
         $message = $validator->getMessageBag();
         Log::info($message->toJson(JSON_PRETTY_PRINT));
+    }
 
+    public function testValidatorValidData()
+    {
+        $data = [
+            "username" => "admin@example.com",
+            "password" => "test1234",
+            "admin" => true,
+            "others" => "xxxx1234",
+        ];
+
+        $rules = [
+            "username" => "required|email|max:100",
+            "password" => "required|min:6|max:20"
+        ];
+
+        $validator = Validator::make($data, $rules);
+        assertNotNull($validator);
+
+        try {
+            $valid = $validator->validate();
+            Log::info(json_encode($valid,JSON_PRETTY_PRINT));
+        } catch (ValidationException $exception) {
+            assertNotNull($exception->validator);
+            $message = $exception->validator->errors();
+            Log::error($message->toJson(JSON_PRETTY_PRINT));
+        }
     }
 }
