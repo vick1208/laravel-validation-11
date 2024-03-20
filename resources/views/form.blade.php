@@ -20,12 +20,16 @@
     <form action="/form" method="post">
         @csrf
         <label for="username">
-            Username:
+            Username: @error('username')
+                {{ $message }}
+            @enderror
         </label>
-        <input type="text" name="username" id="username" >
+        <input type="text" name="username" id="username" value="{{ old('username') }}">
         <br>
         <label for="password">
-            Password:
+            Password: @error('password')
+                {{ $message }}
+            @enderror
         </label>
         <input type="password" name="password" id="password" >
         <br>
