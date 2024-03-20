@@ -250,8 +250,8 @@ class ValidatorTest extends TestCase
             "password" => "test1222!!",
         ];
         $rules = [
-            "username" => ["required",new In(["Budi","Eko","Santi"])],
-            "password" => ["required",Password::min(6)->letters()->numbers()->symbols() ]
+            "username" => ["required", new In(["Budi", "Eko", "Santi"])],
+            "password" => ["required", Password::min(6)->letters()->numbers()->symbols()]
         ];
 
         $validator = Validator::make($data, $rules);
@@ -259,6 +259,65 @@ class ValidatorTest extends TestCase
         assertNotNull($validator);
 
         assertTrue($validator->passes());
+    }
+    public function testNestedArray()
+    {
+        $data = [
+            "name" => [
+                "first" => "Sumarjo",
+                "last" => "Kurniawan"
+            ],
+            "address" => [
+                "street" => "Jalan Gunung",
+                "city" => "Bogor",
+                "country" => "Indonesia"
+            ]
+        ];
 
+        $rules = [
+            "name.first" => ["required", "max:90"],
+            "name.last" => ["max:90"],
+            "address.street" => ["max:200"],
+            "address.city" => ["required", "max:100"],
+            "address.country" => ["required", "max:100"],
+        ];
+
+        $validator = Validator::make($data, $rules);
+
+        assertTrue($validator->passes());
+    }
+    public function testNestedArrayIndexed()
+    {
+        $data = [
+            "name" => [
+                "first" => "Sumarjo",
+                "last" => "Kurniawan"
+            ],
+            "address" => [
+                [
+                    "street" => "Jalan Gunung",
+                    "city" => "Bogor",
+                    "country" => "Indonesia"
+                ],
+                [
+                    "street" => "Jalan Kemiri",
+                    "city" => "Salatiga",
+                    "country" => "Indonesia"
+                ]
+            ]
+
+        ];
+
+        $rules = [
+            "name.first" => ["required", "max:90"],
+            "name.last" => ["max:90"],
+            "address.*.street" => ["max:200"],
+            "address.*.city" => ["required", "max:100"],
+            "address.*.country" => ["required", "max:100"],
+        ];
+
+        $validator = Validator::make($data, $rules);
+
+        assertTrue($validator->passes());
     }
 }
