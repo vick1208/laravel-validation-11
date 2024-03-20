@@ -38,7 +38,7 @@ class FormControlTest extends TestCase
     {
         $response = $this->post('/form', [
             'username' => 'admin',
-            'password' => 'rahasia'
+            'password' => 'rahasia11!!'
         ]);
         $response->assertStatus(200);
     }
